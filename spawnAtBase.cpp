@@ -28,8 +28,6 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 
-#define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
-
 // Define plugin name
 const std::string PLUGIN_NAME = "Spawn at Custom Base";
 
@@ -37,7 +35,7 @@ const std::string PLUGIN_NAME = "Spawn at Custom Base";
 const int MAJOR = 1;
 const int MINOR = 0;
 const int REV = 0;
-const int BUILD = 1;
+const int BUILD = 2;
 
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
@@ -55,11 +53,11 @@ Iter select_randomly(Iter start, Iter end) {
     return select_randomly(start, end, gen);
 }
 
-class BaseSpawnZone : public bz_CustomZoneObject
+class BaseSpawnZone : public bz_CustomZoneObject_V2
 {
 public:
-    BaseSpawnZone() : bz_CustomZoneObject(),
-    team(eNoTeam) {}
+    BaseSpawnZone() : bz_CustomZoneObject_V2(),
+        team(eNoTeam) {}
 
     bz_eTeamType team;
 };
@@ -150,45 +148,18 @@ void SpawnAtBase::Event (bz_EventData *eventData)
         {
             bz_GetPlayerSpawnPosEventData_V1* spawnData = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
 
-            if (bz_getPlayerSpawnAtBase(spawnData->playerID))
+            if (bz_getPlayerSpawnAtBase(spawnData->playerID) && !TeamZones[spawnData->team].empty())
             {
                 spawnData->handled = true;
 
-                BaseSpawnZone zone = *select_randomly(TeamZones[spawnData->team].begin(), TeamZones[spawnData->team].end());
-
                 float spawnLocation[3];
 
-                if (zone.box)
-                {
-                    float pos[3];
-                    float size[3];
-
-                    pos[0] = (zone.xMax + zone.xMin) / 2;
-                    pos[1] = (zone.yMax + zone.yMin) / 2;
-                    pos[2] = zone.zMin;
-
-                    size[0] = (zone.xMax - zone.xMin) / 2;
-                    size[1] = (zone.yMax - zone.yMin) / 2;
-                    size[2] = zone.zMax - zone.zMin;
-
-                    float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
-                    float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
-
-                    const float cos_val = cosf(zone.rotation);
-                    const float sin_val = sinf(zone.rotation);
-                    spawnLocation[0] = (x * cos_val) - (y * sin_val);
-                    spawnLocation[1] = (x * sin_val) + (y * cos_val);
-
-                    spawnLocation[0] += pos[0];
-                    spawnLocation[1] += pos[1];
-                    spawnLocation[2] = pos[2];
-                }
+                BaseSpawnZone zone = *select_randomly(TeamZones[spawnData->team].begin(), TeamZones[spawnData->team].end());
+                zone.getRandomPoint(spawnLocation);
 
                 spawnData->pos[0] = spawnLocation[0];
                 spawnData->pos[1] = spawnLocation[1];
                 spawnData->pos[2] = spawnLocation[2];
-
-                bz_setPlayerSpawnAtBase(spawnData->playerID, false);
             }
         }
         break;
