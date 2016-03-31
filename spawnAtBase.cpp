@@ -92,7 +92,7 @@ const char* SpawnAtBase::Name (void)
     return pluginBuild.c_str();
 }
 
-void SpawnAtBase::Init (const char* commandLine)
+void SpawnAtBase::Init (const char* /*commandLine*/)
 {
     bz_registerCustomMapObject("BASESPAWNZONE", this);
 
