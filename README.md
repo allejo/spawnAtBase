@@ -1,5 +1,8 @@
 # Spawn at Custom Base
 
+[![Current Release](https://img.shields.io/badge/release-v1.0.0-orange.svg)](https://github.com/allejo/spawnAtBase/releases/tag/v1.0.0)
+![Minimum BZFlag Version](https://img.shields.io/badge/BZFlag-v2.4.5+-blue.svg)
+
 This plug-in introduces a custom map object that allows you define spawn zones for players to spawn at **after** a flag capture, initial spawn, or an explicit call to [`bz_setPlayerSpawnAtBase`](https://wiki.bzflag.org/Bz_setPlayerSpawnAtBase); these spawn zones work exactly like a base with regards to respawning after a flag capture.
 
 This is especially useful for maps with custom bases and require custom spawn locations without forcing the players to always spawn there with a normal zone.

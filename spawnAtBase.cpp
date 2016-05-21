@@ -18,15 +18,15 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-*/
+ */
 
 #include <iterator>
+#include <map>
 #include <random>
 #include <sstream>
 #include <vector>
 
 #include "bzfsAPI.h"
-#include "plugin_utils.h"
 
 // Define plugin name
 const std::string PLUGIN_NAME = "Spawn at Custom Base";
@@ -35,11 +35,11 @@ const std::string PLUGIN_NAME = "Spawn at Custom Base";
 const int MAJOR = 1;
 const int MINOR = 0;
 const int REV = 0;
-const int BUILD = 2;
+const int BUILD = 6;
 
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
-    std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+    std::uniform_int_distribution<> dis(0, (int)(std::distance(start, end) - 1));
     std::advance(start, dis(g));
 
     return start;
@@ -53,10 +53,10 @@ Iter select_randomly(Iter start, Iter end) {
     return select_randomly(start, end, gen);
 }
 
-class BaseSpawnZone : public bz_CustomZoneObject_V2
+class BaseSpawnZone : public bz_CustomZoneObject
 {
 public:
-    BaseSpawnZone() : bz_CustomZoneObject_V2(),
+    BaseSpawnZone() : bz_CustomZoneObject(),
         team(eNoTeam) {}
 
     bz_eTeamType team;
@@ -155,7 +155,7 @@ void SpawnAtBase::Event (bz_EventData *eventData)
                 float spawnLocation[3];
 
                 BaseSpawnZone zone = *select_randomly(TeamZones[spawnData->team].begin(), TeamZones[spawnData->team].end());
-                zone.getRandomPoint(spawnLocation);
+                bz_getRandomPoint((bz_CustomZoneObject*)&zone, spawnLocation);
 
                 spawnData->pos[0] = spawnLocation[0];
                 spawnData->pos[1] = spawnLocation[1];
@@ -167,4 +167,3 @@ void SpawnAtBase::Event (bz_EventData *eventData)
         default: break;
     }
 }
-
