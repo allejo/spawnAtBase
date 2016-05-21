@@ -10,12 +10,11 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.spawnAtBase.txt \
-    README.md \
-    spawnAtBase.bzw \
+	README.md \
+	spawnAtBase.bzw \
 	spawnAtBase.def \
 	spawnAtBase.sln \
 	spawnAtBase.vcxproj
 
-MAINTAINERCLEANFILES =	\
+MAINTAINERCLEANFILES =  \
 	Makefile.in
